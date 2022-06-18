@@ -1,0 +1,11 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    text-align:  center;
+
+}
+.buttonBlock {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}

@@ -1,0 +1,15 @@
+.block {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.container {
+    display: flex;
+    justify-content: space-around;
+    width: 500px;
+}
+.error {
+    color: #ff002e;
+}

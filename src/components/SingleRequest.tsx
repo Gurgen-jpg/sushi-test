@@ -16,6 +16,7 @@ type SingleRequestType = {
     changeText: (text: string, id: string) => void
     saveRequest: (isEditable: boolean, id: string) => void
     editRequest: (isEditable: boolean, id: string) => void
+    setToggle:(isToggle: boolean)=>void
 }
 
 export const SingleRequest = ({
@@ -27,6 +28,7 @@ export const SingleRequest = ({
                                   changeText,
                                   saveRequest,
                                   editRequest,
+                                  setToggle,
                               }: SingleRequestType) => {
     const data = require('./../common/request_type.json')
     const name = useAppSelector<string>(state => state.request.name)
@@ -50,6 +52,7 @@ export const SingleRequest = ({
     }
     const onClickSave = () => {
         saveRequest(true, request.id)
+        setToggle(true)
     }
     const onClickEdit = () => {
         editRequest(false, request.id)

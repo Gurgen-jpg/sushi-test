@@ -57,10 +57,11 @@ export const RequestList = () => {
     const [changeName, setChangeName] = useState<boolean>(false)
     const [sortedData, setSortedData] = useState<'up' | 'down' | 'none'>('none')
     const [sortedType, setSortedType] = useState<boolean>(false)
+    const [isToggle, setToggle] = useState<boolean>(true)
 
     //таймер
     const [active, setActive] = useState<boolean>(false)
-    const [[minute,seconds],setTimer] =useState<number[]>([0,20])
+    const [[minute,seconds],setTimer] =useState<number[]>([10,0])
 
     const tickTime = () => {
       if (minute === 0 && seconds === 0) {
@@ -73,14 +74,20 @@ export const RequestList = () => {
         const timerID = setInterval(() => tickTime(), 1000);
         return () => clearInterval(timerID);
     })
-    useEffect(()=>{
-        
-    })
-
 
     const resetTimer = () => {
       setTimer([10, 0])
     }
+    useEffect(()=>{
+        window.addEventListener("mousemove", resetTimer)
+        window.addEventListener('scroll', resetTimer)
+        window.addEventListener('mousedown', resetTimer)
+        return ()=> {
+            window.removeEventListener("mousemove", resetTimer)
+            window.removeEventListener('scroll', resetTimer)
+            window.removeEventListener('mousedown', resetTimer)
+        }
+    })
 
     const onClickNameHandler = (change: boolean) => {
         setChangeName(!change)
@@ -97,6 +104,7 @@ export const RequestList = () => {
             requestText: '',
             isEditable: false,
         }))
+        setToggle(false)
     }
     const changeStatus = (status: boolean, id: string) => {
         dispatch(changeStatusAC(status, id))
@@ -194,14 +202,15 @@ export const RequestList = () => {
                                                   changeText={changeText}
                                                   saveRequest={saveRequest}
                                                   editRequest={editRequest}
+                                                  setToggle={setToggle}
 
                             />
                         })}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Button variant='contained' color='success' sx={{marginTop: '20px'}} onClick={onClickAddHandler}>Добавить
-                заявку</Button>
+            {isToggle && <Button variant='contained' color='success' sx={{marginTop: '20px'}} onClick={onClickAddHandler}>Добавить
+                заявку</Button>}
             <Button variant='contained' color='success' sx={{marginTop: '20px'}} onClick={sortDate}>Сортировка по
                 дате</Button>
             <Button variant='contained' color='success' sx={{marginTop: '20px'}} onClick={sortType}>Сортировка по

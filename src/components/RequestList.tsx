@@ -1,5 +1,5 @@
 import {Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {EditableSpan} from "../common/EditableSpan";
 import {useAppSelector} from "../bll/store";
 import {SingleRequest} from "./SingleRequest";
@@ -13,6 +13,8 @@ import {
 } from "../bll/request-reducer";
 import {useDispatch} from "react-redux";
 import {uuid} from "../common/uuidUtil";
+import { useNavigate } from 'react-router-dom';
+import {PATH} from "../App";
 
 
 export const RequestList = () => {
@@ -49,11 +51,37 @@ export const RequestList = () => {
         },
     ]
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const name = useAppSelector<string>(state => state.request.name)
     const requestList = useAppSelector<RequestType[]>(state => state.request.requestList)
     const [changeName, setChangeName] = useState<boolean>(false)
     const [sortedData, setSortedData] = useState<'up' | 'down' | 'none'>('none')
     const [sortedType, setSortedType] = useState<boolean>(false)
+
+    //таймер
+    const [active, setActive] = useState<boolean>(false)
+    const [[minute,seconds],setTimer] =useState<number[]>([0,20])
+
+    const tickTime = () => {
+      if (minute === 0 && seconds === 0) {
+          setActive(true)
+      } else if (seconds === 0) {
+          setTimer([minute -1, 59])
+      } else setTimer([minute, seconds - 1])
+    }
+    useEffect(()=>{
+        const timerID = setInterval(() => tickTime(), 1000);
+        return () => clearInterval(timerID);
+    })
+    useEffect(()=>{
+        
+    })
+
+
+    const resetTimer = () => {
+      setTimer([10, 0])
+    }
+
     const onClickNameHandler = (change: boolean) => {
         setChangeName(!change)
     }
@@ -130,10 +158,13 @@ export const RequestList = () => {
             return a.type < b.type ? 1 : -1
         })
     }
-
+    if (active) {
+        navigate(PATH.NAME)
+    }
     return (
 
         <>
+            <p>{`${minute} : ${seconds}`}</p>
             <EditableSpan title={name} change={changeName} onClick={onClickNameHandler}/>
             <TableContainer component={Paper}>
 

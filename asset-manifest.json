@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/sushi-test/static/css/main.6568cc4c.css",
+    "main.js": "/sushi-test/static/js/main.0401a110.js",
+    "index.html": "/sushi-test/index.html",
+    "main.6568cc4c.css.map": "/sushi-test/static/css/main.6568cc4c.css.map",
+    "main.0401a110.js.map": "/sushi-test/static/js/main.0401a110.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6568cc4c.css",
+    "static/js/main.0401a110.js"
+  ]
+}

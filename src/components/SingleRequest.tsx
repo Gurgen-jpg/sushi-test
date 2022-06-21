@@ -16,7 +16,7 @@ type SingleRequestType = {
     changeText: (text: string, id: string) => void
     saveRequest: (isEditable: boolean, id: string) => void
     editRequest: (isEditable: boolean, id: string) => void
-    setToggle:(isToggle: boolean)=>void
+    setToggle: (isToggle: boolean) => void
 }
 
 export const SingleRequest = ({
@@ -30,10 +30,16 @@ export const SingleRequest = ({
                                   editRequest,
                                   setToggle,
                               }: SingleRequestType) => {
-    const data = require('./../common/request_type.json')
+
+    const data = require('../common/data.json')
     const name = useAppSelector<string>(state => state.request.name)
     const [show, setShow] = useState<boolean>(false)
     const [text, setText] = useState<string>('')
+    //отключение кнопок EDIT, DELETE
+    const [disableEdit, setDisableEdit] = useState<boolean>(false)
+    const [disableDelete, setDisableDelete] = useState<boolean>(false)
+
+//частные события
     const onChangeStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
         changeStatus(e.currentTarget.checked, request.id)
     }
@@ -52,10 +58,16 @@ export const SingleRequest = ({
     }
     const onClickSave = () => {
         saveRequest(true, request.id)
+        let editButton = setTimeout(() => {
+            setDisableEdit(true)
+        }, 5000)
+        let deleteButton = setTimeout(() => {
+            setDisableDelete(true)
+        }, 10000)
         setToggle(true)
     }
     const onClickEdit = () => {
-        editRequest(false, request.id)
+        editRequest(false, request.id)   //todo --> НЕ РАБОТАЕТ  Сбросить таймер если нажали на EDIT
     }
     return (
         <>
@@ -120,21 +132,23 @@ export const SingleRequest = ({
                 <TableCell align="right">
                     {
                         request.isEditable
-                        ? <Button variant="contained" color="success" sx={{marginRight: '5px'}}
-                                  onClick={onClickEdit}>
-                            EDIT
-                        </Button>
-                        : <>
-                            <Button variant="contained" color="success" sx={{marginRight: '5px'}}
-                                    onClick={onClickSave}>
+                            ? <>
+                                <Button variant="contained" color="success" sx={{marginRight: '5px'}}
+                                        disabled={disableEdit} onClick={onClickEdit}>
+                                    EDIT
+                                </Button>
+                                <Button variant="contained" color="error" sx={{marginRight: '5px'}}
+                                        disabled={disableDelete} onClick={onClickDelete}
+                                >
+                                    DELETE
+                                </Button>
+                            </>
+                            : <Button variant="contained" color="success" sx={{marginRight: '5px'}}
+                                      onClick={onClickSave}>
                                 SAVE
                             </Button>
-                            <Button variant="contained" color="error" sx={{marginRight: '5px'}}
-                                    onClick={onClickDelete}
-                            >
-                                DELETE
-                            </Button>
-                        </>
+
+
                     }
                 </TableCell>
             </TableRow></>

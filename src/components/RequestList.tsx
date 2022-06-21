@@ -12,7 +12,7 @@ import {
     RequestType, saveEditRequestAC
 } from "../bll/request-reducer";
 import {useDispatch} from "react-redux";
-import {uuid} from "../common/uuidUtil";
+import {uuid} from "../common/utils";
 import { useNavigate } from 'react-router-dom';
 import {PATH} from "../App";
 
@@ -59,10 +59,11 @@ export const RequestList = () => {
     const [sortedType, setSortedType] = useState<boolean>(false)
     const [isToggle, setToggle] = useState<boolean>(true)
 
-    //таймер
+//таймер
     const [active, setActive] = useState<boolean>(false)
-    const [[minute,seconds],setTimer] =useState<number[]>([10,0])
+    const [[minute,seconds],setTimer] =useState<number[]>([10,0]) // на бездействие
 
+//отсчет времени бездействия
     const tickTime = () => {
       if (minute === 0 && seconds === 0) {
           setActive(true)
@@ -70,11 +71,12 @@ export const RequestList = () => {
           setTimer([minute -1, 59])
       } else setTimer([minute, seconds - 1])
     }
+
     useEffect(()=>{
         const timerID = setInterval(() => tickTime(), 1000);
         return () => clearInterval(timerID);
     })
-
+//сброс таймера бездействия
     const resetTimer = () => {
       setTimer([10, 0])
     }
@@ -88,7 +90,7 @@ export const RequestList = () => {
             window.removeEventListener('mousedown', resetTimer)
         }
     })
-
+//общие события
     const onClickNameHandler = (change: boolean) => {
         setChangeName(!change)
     }
@@ -103,6 +105,8 @@ export const RequestList = () => {
             author: name,
             requestText: '',
             isEditable: false,
+            deleteButton: true,
+            editButton: true,
         }))
         setToggle(false)
     }
@@ -170,13 +174,12 @@ export const RequestList = () => {
         navigate(PATH.NAME)
     }
     return (
-
         <>
             <p>{`${minute} : ${seconds}`}</p>
             <EditableSpan title={name} change={changeName} onClick={onClickNameHandler}/>
             <TableContainer component={Paper}>
-
-                <Table sx={{'minWidth': '700px', '&:last-child td, &:last-child th': {border: 0, textAlign: 'right'}}}
+                <Table sx={{'minWidth': '800px', '&:last-child td': {border: 0, textAlign: 'right'},
+                    "&:first-child th, &:first-child td":{textAlign: 'left'}}}
                        aria-label="customized table">
                     <TableHead>
                         <TableRow>
@@ -203,19 +206,17 @@ export const RequestList = () => {
                                                   saveRequest={saveRequest}
                                                   editRequest={editRequest}
                                                   setToggle={setToggle}
-
                             />
                         })}
                     </TableBody>
                 </Table>
             </TableContainer>
-            {isToggle && <Button variant='contained' color='success' sx={{marginTop: '20px'}} onClick={onClickAddHandler}>Добавить
+            {isToggle && <Button variant='contained' color='success' sx={{marginTop: '20px', marginRight: '7px'}} onClick={onClickAddHandler}>Добавить
                 заявку</Button>}
-            <Button variant='contained' color='success' sx={{marginTop: '20px'}} onClick={sortDate}>Сортировка по
+            <Button variant='contained' color='success' sx={{marginTop: '20px', marginRight: '7px'}} onClick={sortDate}>Сортировка по
                 дате</Button>
             <Button variant='contained' color='success' sx={{marginTop: '20px'}} onClick={sortType}>Сортировка по
                 типу</Button>
-
         </>
     );
 };

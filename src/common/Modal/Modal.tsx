@@ -5,9 +5,10 @@ interface IModal {
     show: boolean;
     setShow: (showDel: boolean) => void;
     children: React.ReactNode
+    onChange?:()=>void
 }
 
-const Modal: React.FC<IModal> = ({show, setShow, children}) => {
+const Modal: React.FC<IModal> = ({show,setShow, children}) => {
     return (
         <div className={show ? 'modal active' : 'modal'} onClick={() => setShow(false)}>
             <div className={show ? 'modal__content active' : 'modal__content'}

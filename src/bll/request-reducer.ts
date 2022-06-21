@@ -130,6 +130,8 @@ export type RequestType = {
     author: string,
     requestText: string
     isEditable: boolean
+    editButton: boolean
+    deleteButton: boolean
 }
 export type InitialStateType = {
     name: string

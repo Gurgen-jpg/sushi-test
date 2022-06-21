@@ -48,8 +48,6 @@ export const SelectCell: React.FC<ISelectCell> = ({
             setNewType([newOption, ...typeArray])
             onChangeSelect(newOption, id); //todo НЕ РАБОТАЕТ --> включить первую ОПЦИЮ
             setNewOption('')
-
-            // types.push(newOption)
             setShow(false)
         } else setError(true)
     },[id, newOption, onChangeSelect, typeArray])

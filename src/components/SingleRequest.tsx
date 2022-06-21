@@ -76,11 +76,11 @@ export const SingleRequest = React.memo(function ({
     useEffect(() => {
         let editButton = setTimeout(() => {
             setDisableEdit(true)
-        }, 5000)
+        }, 180000)
 
         let deleteButton = setTimeout(() => {
             setDisableDelete(true)
-        }, 10000)
+        }, 360000)
         return () => {
             clearTimeout(editButton)
             clearTimeout(deleteButton)

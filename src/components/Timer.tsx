@@ -8,7 +8,7 @@ export const Timer = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [active, setActive] = useState<boolean>(false)
-    const [[minute, seconds], setTimer] = useState<number[]>([0, 5]) // на бездействие
+    const [[minute, seconds], setTimer] = useState<number[]>([10, 0]) // на бездействие
 
 //отсчет времени бездействия
     const tickTime =  () => {
@@ -37,7 +37,7 @@ export const Timer = () => {
     },[])
 //сброс таймера бездействия
     const resetTimer = useMemo(()=>() => {
-        setTimer([0, 5])
+        setTimer([10, 0])
     },[])
     useEffect(() => {
         window.addEventListener("mousemove", resetTimer)
@@ -55,10 +55,8 @@ export const Timer = () => {
         dispatch(resetTableAC())
     }
     return (
-        <div>
-            <p>{`${minute} : ${seconds}`}</p>
+        <>
 
-
-        </div>
+        </>
     );
 };

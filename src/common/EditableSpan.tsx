@@ -44,17 +44,19 @@ export const EditableSpan = ({title, change, onClick}: EditableSpanTypeProps) =>
                 change
                     ?
                     <div className={s.block}>
-                        <div className={s.container}><TextField
-                            defaultValue={name}
-                            onChange={onChangeHandler}
-                            // value={name}
-                            onKeyPress={onKeyPressHandler}
-                            onBlur={onBlurHandler}
-                        />
-                            <Button variant='contained' color='success' onClick={onClickHandler}>
+                        <div className={s.container}>
+                            <TextField
+                                error={error}
+                                defaultValue={name}
+                                onChange={onChangeHandler}
+                                // value={name}
+                                onKeyPress={onKeyPressHandler}
+                                onBlur={onBlurHandler}
+                            />
+                            <Button variant='contained' color={error ? "error" : 'success'} onClick={onClickHandler}>
                                 Сохранить
                             </Button>
-                            {error ? <span className={s.error}> введите имя пользователя</span> : ''}</div>
+                        </div>
                     </div>
                     : <h3 onClick={() => onClick && onClick(change)}>{title}</h3>
             }

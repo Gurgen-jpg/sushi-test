@@ -59,11 +59,19 @@ export const requestReducer = (state: InitialStateType = initialState, action: A
                 } : {...req})
             }
         }
+        case "RESET-TABLE": {
+            return {
+                ...state, requestList: []
+            }
+        }
         default:
             return {...state}
     }
 }
+export const resetTableAC = () => ({
+    type: 'RESET-TABLE',
 
+} as const)
 export const saveEditRequestAC = (isEditable: boolean, id: string) => ({
     type: 'REQUEST-REDUCER/SAVE-EDIT-REQUEST',
     isEditable,
@@ -101,6 +109,7 @@ export const changeProgressAC = (progress: string, id: string) => ({
     progress,
     id
 } as const)
+export type resetTableACType = ReturnType<typeof resetTableAC>
 export type saveEditRequestACType = ReturnType<typeof saveEditRequestAC>
 export type addTextACType = ReturnType<typeof addTextAC>
 export type changeProgressACType = ReturnType<typeof changeProgressAC>
@@ -118,6 +127,7 @@ export type AppActionType =
     | changeProgressACType
     | addTextACType
     | saveEditRequestACType
+    | resetTableACType
 export type RequestType = {
     id: string
     addDate: {

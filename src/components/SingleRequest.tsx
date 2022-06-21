@@ -1,11 +1,12 @@
 import {Button, Checkbox, Portal, TableCell, TableRow, TextField} from '@mui/material';
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {RequestType} from "../bll/request-reducer";
 import {AddTime} from '../common/AddTime';
 import {SelectCell} from "./SelectCell";
 import Modal from "../common/Modal/Modal";
 import {useAppSelector} from "../bll/store";
 import s from './../common/Modal/Modal.module.css';
+import {loadState} from "../common/localStorage-utils";
 
 
 type SingleRequestType = {
@@ -20,17 +21,17 @@ type SingleRequestType = {
     setToggle: (isToggle: boolean) => void
 }
 
-export const SingleRequest = ({
-                                  request,
-                                  changeStatus,
-                                  deleteRequest,
-                                  changeType,
-                                  changeProgress,
-                                  changeText,
-                                  saveRequest,
-                                  editRequest,
-                                  setToggle,
-                              }: SingleRequestType) => {
+export const SingleRequest = React.memo(function ({
+                                                      request,
+                                                      changeStatus,
+                                                      deleteRequest,
+                                                      changeType,
+                                                      changeProgress,
+                                                      changeText,
+                                                      saveRequest,
+                                                      editRequest,
+                                                      setToggle,
+                                                  }: SingleRequestType) {
 
     const data = require('../common/data.json')
     const name = useAppSelector<string>(state => state.request.name)
@@ -40,33 +41,35 @@ export const SingleRequest = ({
     const [disableEdit, setDisableEdit] = useState<boolean>()
     const [disableDelete, setDisableDelete] = useState<boolean>()
 
+    console.log('ПЕРЕРИСОВКА СНГЛ РЕКВЕСТ')
+
 //частные события
-    const onChangeStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    const onChangeStatusHandler = useMemo(() => (e: ChangeEvent<HTMLInputElement>) => {
         changeStatus(e.currentTarget.checked, request.id)
-    }
+    }, [changeStatus, request])
     const onClickDelete = () => {
         setShow(true)
     }
-    const yesDeleteButton = () => {
+    const yesDeleteButton = useCallback(() => {
         deleteRequest(request.id)
         setShow(false)
-    }
+    }, [deleteRequest, request])
     const onChangeText = (e: ChangeEvent<HTMLInputElement>) => {
         setText(e.currentTarget.value)
     }
-    const onBlurHandler = () => {
+    const onBlurHandler = useCallback(() => {
         changeText(text, request.id)
-    }
-    const onClickSave = () => {
+    }, [changeText, request, text])
+    const onClickSave = useCallback(() => {
         saveRequest(true, request.id)
         setDisableEdit(false)
         setDisableDelete(false)
         setToggle(true)
-    }
-    const onClickEdit = () => {
-        editRequest(false, request.id)   //todo --> НЕ РАБОТАЕТ  Сбросить таймер если нажали на EDIT
+    }, [saveRequest, request.id, setToggle])
+    const onClickEdit = useCallback(() => {
+        editRequest(false, request.id)
         setDisableDelete(false)
-    }
+    }, [editRequest, request])
 
     //обновление тайминга для дезейбла кнопки  Edit & Delete (Edit зависимость от SAVE, Delete зависимость от SAVE & EDIT)
 
@@ -78,11 +81,7 @@ export const SingleRequest = ({
         let deleteButton = setTimeout(() => {
             setDisableDelete(true)
         }, 10000)
-
-
-        console.log({editButton, deleteButton})
         return () => {
-            console.log('we are inside ClearTimeout')
             clearTimeout(editButton)
             clearTimeout(deleteButton)
         }
@@ -136,7 +135,7 @@ export const SingleRequest = ({
                     />
                 </TableCell>
                 <TableCell align="right">
-                    {name}
+                    {name || loadState()}
                 </TableCell>
                 <TableCell align="right">
                     <TextField multiline
@@ -172,5 +171,5 @@ export const SingleRequest = ({
                 </TableCell>
             </TableRow></>
     );
-};
+});
 

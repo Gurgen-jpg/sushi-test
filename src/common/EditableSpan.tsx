@@ -5,7 +5,6 @@ import {useDispatch} from "react-redux";
 import s from './../components/NameComponent.module.css';
 
 
-
 type EditableSpanTypeProps = {
     title: string
     change: boolean
@@ -13,6 +12,7 @@ type EditableSpanTypeProps = {
 }
 
 export const EditableSpan = ({title, change, onClick}: EditableSpanTypeProps) => {
+
     const [name, setName] = useState<string>(title)
     const [error, setError] = useState<boolean>(false)
     const dispatch = useDispatch();

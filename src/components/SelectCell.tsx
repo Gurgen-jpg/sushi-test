@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useCallback, useState} from 'react';
 import {
     Box,
     Button,
@@ -43,7 +43,7 @@ export const SelectCell: React.FC<ISelectCell> = ({
         setError(false)
         setNewOption(e.currentTarget.value)
     }
-    const saveButton = () => {
+    const saveButton = useCallback(() => {
         if (newOption.trim().length > 0) {
             setNewType([newOption, ...typeArray])
             onChangeSelect(newOption, id); //todo НЕ РАБОТАЕТ --> включить первую ОПЦИЮ
@@ -52,7 +52,7 @@ export const SelectCell: React.FC<ISelectCell> = ({
             // types.push(newOption)
             setShow(false)
         } else setError(true)
-    }
+    },[id, newOption, onChangeSelect, typeArray])
 
     return (
 

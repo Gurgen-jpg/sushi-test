@@ -1,11 +1,12 @@
 import {Button, Checkbox, Portal, TableCell, TableRow, TextField} from '@mui/material';
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import {RequestType} from "../bll/request-reducer";
 import {AddTime} from '../common/AddTime';
 import {SelectCell} from "./SelectCell";
 import Modal from "../common/Modal/Modal";
 import {useAppSelector} from "../bll/store";
 import s from './../common/Modal/Modal.module.css';
+
 
 type SingleRequestType = {
     request: RequestType
@@ -36,8 +37,8 @@ export const SingleRequest = ({
     const [show, setShow] = useState<boolean>(false)
     const [text, setText] = useState<string>('')
     //отключение кнопок EDIT, DELETE
-    const [disableEdit, setDisableEdit] = useState<boolean>(false)
-    const [disableDelete, setDisableDelete] = useState<boolean>(false)
+    const [disableEdit, setDisableEdit] = useState<boolean>()
+    const [disableDelete, setDisableDelete] = useState<boolean>()
 
 //частные события
     const onChangeStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,17 +59,35 @@ export const SingleRequest = ({
     }
     const onClickSave = () => {
         saveRequest(true, request.id)
-        let editButton = setTimeout(() => {
-            setDisableEdit(true)
-        }, 5000)
-        let deleteButton = setTimeout(() => {
-            setDisableDelete(true)
-        }, 10000)
+        setDisableEdit(false)
+        setDisableDelete(false)
         setToggle(true)
     }
     const onClickEdit = () => {
         editRequest(false, request.id)   //todo --> НЕ РАБОТАЕТ  Сбросить таймер если нажали на EDIT
+        setDisableDelete(false)
     }
+
+    //обновление тайминга для дезейбла кнопки  Edit & Delete (Edit зависимость от SAVE, Delete зависимость от SAVE & EDIT)
+
+    useEffect(() => {
+        let editButton = setTimeout(() => {
+            setDisableEdit(true)
+        }, 5000)
+
+        let deleteButton = setTimeout(() => {
+            setDisableDelete(true)
+        }, 10000)
+
+
+        console.log({editButton, deleteButton})
+        return () => {
+            console.log('we are inside ClearTimeout')
+            clearTimeout(editButton)
+            clearTimeout(deleteButton)
+        }
+    }, [request.isEditable])
+
     return (
         <>
             <Portal>
@@ -117,7 +136,7 @@ export const SingleRequest = ({
                     />
                 </TableCell>
                 <TableCell align="right">
-                    {request.author}
+                    {name}
                 </TableCell>
                 <TableCell align="right">
                     <TextField multiline

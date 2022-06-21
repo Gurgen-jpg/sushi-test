@@ -1,5 +1,15 @@
 import React, {ChangeEvent, useState} from 'react';
-import {Box, Button, FormControl, InputLabel, MenuItem, Portal, Select, SelectChangeEvent, TextField} from "@mui/material";
+import {
+    Box,
+    Button,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Portal,
+    Select,
+    SelectChangeEvent,
+    TextField
+} from "@mui/material";
 import Modal from "../common/Modal/Modal";
 import s from './../common/Modal/Modal.module.css';
 import {useAppSelector} from "../bll/store";
@@ -26,42 +36,42 @@ export const SelectCell: React.FC<ISelectCell> = ({
     const handleChange = (event: SelectChangeEvent) => {
         if (event.target.value === "...добавить") {
             setShow(true)
-            onChangeSelect(typeArray[typeArray.length - 1] as string, id);
         }
         onChangeSelect(event.target.value as string, id);
     };
     const onChangeTypeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setError(false)
-      setNewOption(e.currentTarget.value)
+        setNewOption(e.currentTarget.value)
     }
     const saveButton = () => {
-        if (newOption.trim().length > 0){
+        if (newOption.trim().length > 0) {
             setNewType([newOption, ...typeArray])
+            onChangeSelect(newOption, id); //todo НЕ РАБОТАЕТ --> включить первую ОПЦИЮ
             setNewOption('')
-            onChangeSelect(typeArray[0] as string, id); //todo НЕ РАБОТАЕТ --> включить первую ОПЦИЮ
-            types.push(newOption)
+
+            // types.push(newOption)
             setShow(false)
-        }
-        else setError(true)
+        } else setError(true)
     }
+
     return (
 
         <>
             <Portal>
                 <Modal show={show} setShow={setShow}>
-                <div className={s.container}>
-                    <h3>{name} вы хотите добавить новую опцию?</h3>
-                    <TextField
-                        error={error}
-                        onChange={onChangeTypeHandler}
-                        value={newOption}
-                    />
-                    <div className={s.buttonBlock}>
-                        <Button onClick={saveButton}>Добавить</Button>
-                        <Button onClick={() => setShow(false)}>Отмена</Button>
+                    <div className={s.container}>
+                        <h3>{name} вы хотите добавить новую опцию?</h3>
+                        <TextField
+                            error={error}
+                            onChange={onChangeTypeHandler}
+                            value={newOption}
+                        />
+                        <div className={s.buttonBlock}>
+                            <Button onClick={saveButton}>Добавить</Button>
+                            <Button onClick={() => setShow(false)}>Отмена</Button>
+                        </div>
                     </div>
-                </div>
-            </Modal>
+                </Modal>
             </Portal>
             <Box sx={{minWidth: 120}}>
                 <FormControl fullWidth>

@@ -1,17 +1,20 @@
 import {combineReducers, legacy_createStore as createStore} from "redux";
 import {TypedUseSelectorHook, useSelector} from "react-redux";
-import {appReducer} from "./app-reducer";
 import {requestReducer} from "./request-reducer";
+import {loadState, saveState} from "../common/localStorage-utils";
 
 
 export const rootReducer = combineReducers({
-    app: appReducer,
     request: requestReducer,
 })
-export const store = createStore(rootReducer)
+//Типизированный useSelector
 export const useAppSelector: TypedUseSelectorHook<AppStateType> = useSelector
+
+//Имя будем доставать из LocalStorage
+
+export const store = createStore(rootReducer, loadState())
 store.subscribe(() => {
-    localStorage.setItem('name', JSON.stringify(store.getState().request.name))
+    saveState(store.getState().request.name)
 })
 
 

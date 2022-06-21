@@ -13,43 +13,13 @@ import {
 } from "../bll/request-reducer";
 import {useDispatch} from "react-redux";
 import {uuid} from "../common/utils";
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {PATH} from "../App";
+import {columns} from "../common/columsForTable";
 
 
 export const RequestList = () => {
-    const columns = [
-        {
-            header: 'Дата добавления',
-            accessor: 'addDate',
-            sorted: true,
-        },
-        {
-            header: 'Тип заявки',
-            accessor: 'type',
-            sorted: true,
-        },
-        {
-            header: 'Готовность',
-            accessor: 'status',
-            sorted: false,
-        },
-        {
-            header: 'Статус',
-            accessor: 'progress',
-            sorted: false,
-        },
-        {
-            header: 'Автор',
-            accessor: 'author',
-            sorted: false,
-        },
-        {
-            header: 'Текст',
-            accessor: 'requestText',
-            sorted: false,
-        },
-    ]
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const name = useAppSelector<string>(state => state.request.name)
@@ -61,35 +31,37 @@ export const RequestList = () => {
 
 //таймер
     const [active, setActive] = useState<boolean>(false)
-    const [[minute,seconds],setTimer] =useState<number[]>([10,0]) // на бездействие
+    const [[minute, seconds], setTimer] = useState<number[]>([0, 5]) // на бездействие
 
 //отсчет времени бездействия
     const tickTime = () => {
-      if (minute === 0 && seconds === 0) {
-          setActive(true)
-      } else if (seconds === 0) {
-          setTimer([minute -1, 59])
-      } else setTimer([minute, seconds - 1])
+        if (minute === 0 && seconds === 0) {
+            setActive(true)
+        } else if (seconds === 0) {
+            setTimer([minute - 1, 59])
+        } else setTimer([minute, seconds - 1])
     }
 
-    useEffect(()=>{
+    useEffect(() => {
+        console.log('useefect 1')
         const timerID = setInterval(() => tickTime(), 1000);
         return () => clearInterval(timerID);
-    })
+    }, [tickTime])
 //сброс таймера бездействия
     const resetTimer = () => {
-      setTimer([10, 0])
+        setTimer([0, 5])
     }
-    useEffect(()=>{
+    useEffect(() => {
+        console.log('useefect resetTimer')
         window.addEventListener("mousemove", resetTimer)
         window.addEventListener('scroll', resetTimer)
         window.addEventListener('mousedown', resetTimer)
-        return ()=> {
+        return () => {
             window.removeEventListener("mousemove", resetTimer)
             window.removeEventListener('scroll', resetTimer)
             window.removeEventListener('mousedown', resetTimer)
         }
-    })
+    }, [])
 //общие события
     const onClickNameHandler = (change: boolean) => {
         setChangeName(!change)
@@ -126,10 +98,10 @@ export const RequestList = () => {
         dispatch((addTextAC(text, id)))
     }
     const saveRequest = (isEditable: boolean, id: string) => {
-        dispatch(saveEditRequestAC(isEditable,id))
+        dispatch(saveEditRequestAC(isEditable, id))
     }
     const editRequest = (isEditable: boolean, id: string) => {
-      dispatch(saveEditRequestAC(isEditable, id))
+        dispatch(saveEditRequestAC(isEditable, id))
     }
     const sortDate = () => {
         switch (sortedData) {
@@ -170,6 +142,8 @@ export const RequestList = () => {
             return a.type < b.type ? 1 : -1
         })
     }
+
+    //Если пользователя нет больше 10 минут переход на страницу имени
     if (active) {
         navigate(PATH.NAME)
     }
@@ -178,8 +152,10 @@ export const RequestList = () => {
             <p>{`${minute} : ${seconds}`}</p>
             <EditableSpan title={name} change={changeName} onClick={onClickNameHandler}/>
             <TableContainer component={Paper}>
-                <Table sx={{'minWidth': '800px', '&:last-child td': {border: 0, textAlign: 'right'},
-                    "&:first-child th, &:first-child td":{textAlign: 'left'}}}
+                <Table sx={{
+                    'minWidth': '800px', '&:last-child td': {border: 0, textAlign: 'right'},
+                    "&:first-child th, &:first-child td": {textAlign: 'left'}
+                }}
                        aria-label="customized table">
                     <TableHead>
                         <TableRow>
@@ -211,9 +187,11 @@ export const RequestList = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {isToggle && <Button variant='contained' color='success' sx={{marginTop: '20px', marginRight: '7px'}} onClick={onClickAddHandler}>Добавить
+            {isToggle && <Button variant='contained' color='success' sx={{marginTop: '20px', marginRight: '7px'}}
+                                 onClick={onClickAddHandler}>Добавить
                 заявку</Button>}
-            <Button variant='contained' color='success' sx={{marginTop: '20px', marginRight: '7px'}} onClick={sortDate}>Сортировка по
+            <Button variant='contained' color='success' sx={{marginTop: '20px', marginRight: '7px'}} onClick={sortDate}>Сортировка
+                по
                 дате</Button>
             <Button variant='contained' color='success' sx={{marginTop: '20px'}} onClick={sortType}>Сортировка по
                 типу</Button>
